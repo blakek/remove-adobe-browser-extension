@@ -1,5 +1,7 @@
 # remove-adobe-browser-extension
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/blakek/remove-adobe-browser-extension.svg)](https://greenkeeper.io/)
+
 > Removes Adobe Acrobat's browser plugin (currently macOS only; supports Firefox
 > and Safari)
 
