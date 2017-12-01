@@ -68,7 +68,7 @@ showHelp() {
 		Options:
 		  -h, --help     show this help text
 		  -v, --verbose  be more verbose
-		  -V, --version  print script version
+		  -V, --version  print script version and exit
 
 		Supported browsers:
 		  firefox
@@ -86,7 +86,7 @@ main() {
 		case $arg in
 			-h|--help) showHelp; exit;;
 			-v|--verbose) verbosity=1;;
-			-V|--version) echo "${versionString}";;
+			-V|--version) echo "${versionString}"; exit;;
 			# Removals happen at then end in case a modifier (e.g. -v) is used
 			chrome) removals+=(removeForChrome);;
 			firefox) removals+=(removeForFirefox);;
