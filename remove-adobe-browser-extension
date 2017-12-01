@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+set -eu -o pipefail
+
+##
+# Description: Removes Adobe Acrobat's browser plugin (currently macOS only; supports Firefox and Safari)
+# Date: 2017-12-01
+# Written by:
+#   - Blake Knight <oss.ideas@gmail.com> (http://blakek.me/)
+##
+
+__dirname="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__filename="$(basename "${BASH_SOURCE[0]}")"
+verbosity=0
+versionString='1.0.0'
+
+removeForChrome() {
+	echo 'Chrome is not yet supported.'
+}
+
+removeForFirefox() {
+	extensionFolders=$(
+		find '/Library/Application Support/Mozilla/Extensions' \
+		  -maxdepth 2 \
+			-iname 'web2pdfextension*' \
+			-execdir 'pwd' \;
+	)
+
+	if (( verbosity > 0 )); then
+		echo '(Firefox) removing folders:'
+	fi
+
+	for folder in "${extensionFolders}"; do
+		if (( verbosity > 0 )); then
+			echo "${folder}"
+		fi
+		sudo rm -rf "${folder}"
+	done
+}
+
+removeForSafari() {
+	extensions=$(
+		find '/Library/Internet Plug-Ins' -iname 'AdobePDFViewer*' -maxdepth 2
+	)
+
+	if (( verbosity > 0 )); then
+		echo '(Safari) removing files:'
+	fi
+
+	for extension in "${extensions}"; do
+		if (( verbosity > 0 )); then
+			echo "${extension}"
+		fi
+		sudo rm -rf "${folder}"
+	done
+}
+
+showHelp() {
+	cat <<-EOF |
+		Usage: ${__filename} [options] [browsers]
+
+		Examples:
+		  Remove for all known browsers:
+		    ${__filename}
+
+		  Remove for certain browsers:
+		    ${__filename} firefox
+
+		Options:
+		  -h, --help     show this help text
+		  -v, --verbose  be more verbose
+		  -V, --version  print script version
+
+		Supported browsers:
+		  firefox
+		  safari
+EOF
+	sed s/\$\{__filename\}/"${__filename}"/g
+}
+
+main() {
+	local -a removals=()
+
+	while (( $# > 0 )); do
+		arg="$1"
+
+		case $arg in
+			-h|--help) showHelp; exit;;
+			-v|--verbose) verbosity=1;;
+			-V|--version) echo "${versionString}";;
+			# Removals happen at then end in case a modifier (e.g. -v) is used
+			chrome) removals+=(removeForChrome);;
+			firefox) removals+=(removeForFirefox);;
+			safari) removals+=(removeForSafari);;
+			*) echo "Error: unrecognized argument '$1'" >&2; exit 1;
+		esac
+
+		shift
+	done
+
+	# If no browsers were specified, remove for all known browsers
+	if (( ${#removals[@]} == 0 )); then
+		removeForFirefox
+		removeForSafari
+	else
+		for cmd in "${removals[@]}"; do
+			${cmd}
+		done
+	fi
+}
+
+main "$@"
