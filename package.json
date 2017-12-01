@@ -1,0 +1,9 @@
+{
+  "name": "remove-adobe-browser-extension",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/blakek/remove-adobe-browser-extension",
+  "author": "Blake Knight <oss.ideas@gmail.com> (http://blakek.me/)",
+  "license": "MIT",
+  "bin": "remove-adobe-browser-extension"
+}
